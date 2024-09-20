@@ -7,7 +7,7 @@ import jwt from "jsonwebtoken";
 import{ SignupModel,ProductModel,CartModel} from "../backend/SignupModeling.js";
 
 const app = express();
-const PORT = process.env.JWT_SECRET ||  3001;
+const PORT = process.env.PORT||  3001;
 const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret";
 
 app.use(cors());
