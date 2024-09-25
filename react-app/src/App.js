@@ -22,7 +22,7 @@ import Otpfield from './component/Otpfield';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 function App() {
   return (
-    <GoogleOAuthProvider clientId="867104817900-q3m18tfajavhir4nbv87o6jtrvois2q1.apps.googleusercontent.com">
+    <GoogleOAuthProvider clientId="663051077642-lk27c11jh230j4vdcb6sduj5fp4jela4.apps.googleusercontent.com">
     <AuthProvider>
     
     <Router>

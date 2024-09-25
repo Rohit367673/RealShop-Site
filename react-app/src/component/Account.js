@@ -1,5 +1,5 @@
-import React, { useState, useContext, useRef } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useContext, useRef, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import axios from 'axios';
 import { AuthContext } from "./AuthContext";
@@ -8,30 +8,48 @@ function Account() {
   const { user } = useContext(AuthContext);
   const uploadedImage = useRef(null);
   const imageUploader = useRef(null);
+  const location = useLocation();
+  const userData = location.state; 
+  
+  const [formValues, setFormValues] = useState({
+    Name: user?.Name || userData?.Name || "",
+    Email: user?.Email || userData?.Email || "",
+    birthday: "Birthday",
+    phone: user?.Number || userData?.Number || "",
+    password: user?.Pass || userData?.password || "",
+    id: user?.id || userData?.id || ""
+  });
 
-  const handleImageUpload = e => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
+
+  useEffect(() => {
+    console.log(userData)
+    if (userData) {
+      setFormValues((prevValues) => ({
+        ...prevValues,
+        Name: userData.Name || prevValues.Name,
+        Email: userData.Email || prevValues.Email,
+        phone: userData.phone || prevValues.phone,
+        id: userData.id || prevValues.id,
+        photo: userData.ProfilePic || prevValues.ProfilePic
+      }));
+    }
+  }, [userData]);
+
+  const handleImageUpload = (e) => {
     const [file] = e.target.files;
     if (file) {
       const reader = new FileReader();
       const { current } = uploadedImage;
       current.file = file;
-      reader.onload = e => {
+      reader.onload = (e) => {
         current.src = e.target.result;
       };
       reader.readAsDataURL(file);
     }
   };
-
-  const [isEditing, setIsEditing] = useState(false);
-  const [formValues, setFormValues] = useState({
-    Name: user?.Name || "",
-    Email: user?.Email || "",
-    birthday: "Birthday",
-    phone: user?.Number || "",
-    password: user?.Pass || "",
-    id: user?.id || ""
-  });
-  const [showPassword, setShowPassword] = useState(false);
 
   const handleEditClick = () => {
     setIsEditing(!isEditing);
@@ -47,18 +65,19 @@ function Account() {
 
   const handleSaveClick = () => {
     setIsEditing(false);
-    const token = localStorage.getItem('token');
-    axios.post('http://localhost:3001/updateProfile', formValues, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    })
-    .then(response => {
-      console.log('Response:', response.data);
-    })
-    .catch(error => {
-      console.error('There was an error updating the profile!', error);
-    });
+    const token = localStorage.getItem("token");
+    axios
+      .post("http://localhost:3001/updateProfile", formValues, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        console.log("Response:", response.data);
+      })
+      .catch((error) => {
+        console.error("There was an error updating the profile!", error);
+      });
   };
 
   const togglePasswordVisibility = () => {
@@ -81,7 +100,7 @@ function Account() {
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
-              justifyContent: "center"
+              justifyContent: "center",
             }}
           >
             <input
@@ -110,7 +129,8 @@ function Account() {
                   borderRadius: "50%",
                   margin: "0rem auto auto",
                 }}
-                alt=""
+                alt="Profile"
+                src={formValues.photo}
               />
             </div>
           </div>

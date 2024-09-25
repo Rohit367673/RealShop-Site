@@ -28,11 +28,12 @@ function Login() {
     e.preventDefault();
 
     axios
-      .post("http://localhost:3001/login", { Email, Pass })
+      .post("http://localhost:3001/login", { Email, Pass },)
       .then((res) => {
         if (res.data.message === "success") {
     
           navigate("/Account", { state: res.data.user });
+          
           login(res.data.token, res.data.user);
         } else {
           setError(res.data.message);
@@ -66,7 +67,7 @@ function Login() {
         value={Pass}
         onChange={(e) => setPassword(e.target.value)}
       />
-      <div className="eye">
+      <div className="eye -mt-8">
         <button type="button" onClick={() => setShow(!show)}>
           {show ? <FiEyeOff /> : <FiEye />}
         </button>
@@ -84,6 +85,9 @@ function Login() {
         onSuccess={credentialResponse => {
           const credentialResponseD =jwtDecode(credentialResponse.credential)
           console.log(credentialResponseD);
+          console.log(credentialResponseD.iss);
+          console.log(credentialResponseD.picture);
+
         }}
         onError={() => {
           console.log('Login Failed');
